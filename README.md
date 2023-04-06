@@ -1,2 +1,2 @@
 # .github
-Reusable actions entitites
+Reusable actions entitites, e.g. workflows.
