@@ -10,6 +10,11 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      runs-on: 
+        required: false
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -18,7 +23,7 @@ jobs:
     strategy:
       matrix:
         # os: [ubuntu-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: ${{ fromJson(inputs.runs-on) }}
     # The type of runner that the job will run on
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -30,6 +35,7 @@ jobs:
           python-version: "3.11"
       # Runs a single command using the runners shell
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "${{ fromJson(inputs.runs-on) }}"
       #- run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Testing if literal
         run: |
