@@ -6,13 +6,18 @@ name: Python build
 on:
   workflow_call:
     inputs:
+      coverage_source:
+        required: false
+        type: string
+        default: "."
+      runs-on:
+        required: false
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
       version:
         required: false
         type: string
-        default: 3.11
-      coverage_source:
-        required: true
-        type: string
+        default: '["3.10", "3.11"]'
 
 permissions:
   contents: read
@@ -21,16 +26,18 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         # os: [ubuntu-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: ${{ fromJson(inputs.runs-on) }}
+        python-version: ${{ fromJson(inputs.version) }}
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ inputs.version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
-          python-version: "${{ inputs.version }}"
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
