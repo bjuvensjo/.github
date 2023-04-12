@@ -1,0 +1,51 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+on:
+  # push:
+  #   branches: ["main"]
+  # pull_request:
+  #   branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+    inputs:
+      runs-on: 
+        required: false
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        # os: [ubuntu-latest]
+        os: ${{ fromJson(inputs.runs-on) }}
+    # The type of runner that the job will run on
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      # Runs a single command using the runners shell
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "${{ fromJson(inputs.runs-on) }}"
+      #- run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Testing if literal
+        run: |
+          echo "Hello ${{ runner.os }}"
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        shell: bash
+        if: matrix.os == 'ubuntu-latest'
+      - name: Testing if literal
+        run: |
+          echo "Hello ${{ runner.os }}"
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        shell: bash
+        if: matrix.os == 'windows-latest'
