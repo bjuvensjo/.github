@@ -7,10 +7,6 @@ on:
         required: false
         type: string
         default: "."
-      src:
-        required: false
-        type: string
-        default: "."
       runs-on:
         required: false
         type: string
@@ -58,7 +54,7 @@ jobs:
         run: poetry install --no-interaction
         shell: bash
       - name: Run Black
-        run: poetry run black ${{ github.event.inputs.src }}
+        run: poetry run black .
         shell: bash
       - name: Run Tests
         run: poetry run pytest --cov="${{ github.event.inputs.cov }}"
