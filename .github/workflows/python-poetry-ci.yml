@@ -1,9 +1,13 @@
-name: Python CI
+name: Python Poetry CI
 
 on:
   workflow_call:
     inputs:
-      coverage_source:
+      cov:
+        required: false
+        type: string
+        default: "."
+      src:
         required: false
         type: string
         default: "."
@@ -34,20 +38,21 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install Poetry
         run: |
-          python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          source $HOME/.poetry/env
         shell: bash
-      - name: Lint with flake8
-        run: |
-          # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-          # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+      - name: Install Dependencies
+        run: poetry install
         shell: bash
-      - name: Test and report coverage with pytest
-        run: |
-          pytest --cov ${{ inputs.coverage_source }}
+      - name: Run Black
+        run: poetry run black ${{ github.event.inputs.src }}
         shell: bash
+      - name: Run Tests
+        run: poetry run pytest --cov="${{ github.event.inputs.cov }}"
+        shell: bash
+      # - name: Upload Coverage
+      #   uses: codecov/codecov-action@v2.1.0
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }}
