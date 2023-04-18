@@ -39,13 +39,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install Poetry
-        run: |
-          curl -sSL https://install.python-poetry.org | python3 -
-          # curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          source $HOME/.poetry/env
-        shell: bash
+        uses: snok/install-poetry@v1
       - name: Install Dependencies
-        run: poetry install
+        run: poetry install --no-interaction
         shell: bash
       - name: Run Black
         run: poetry run black ${{ github.event.inputs.src }}
