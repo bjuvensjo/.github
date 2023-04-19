@@ -57,7 +57,7 @@ jobs:
         run: poetry run black .
         shell: bash
       - name: Run Tests
-        run: poetry run pytest --cov="${{ github.event.inputs.cov }}"
+        run: poetry run pytest --cov="${{ inputs.cov }}"
         shell: bash
       # - name: Upload Coverage
       #   uses: codecov/codecov-action@v2.1.0
