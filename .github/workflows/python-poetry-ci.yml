@@ -53,9 +53,9 @@ jobs:
       - name: Install project
         run: poetry install --no-interaction
         shell: bash
-      - name: Run Black
-        run: poetry run black .
-        shell: bash
+      # - name: Run Black
+      #   run: poetry run black .
+      #   shell: bash
       - name: Run Tests
         run: poetry run pytest --cov="${{ inputs.cov }}"
         shell: bash
