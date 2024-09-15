@@ -1,0 +1,45 @@
+name: Python uv CI
+
+on:
+  workflow_call:
+    inputs:
+      coverage_source:
+        required: false
+        type: string
+        default: "."
+      runs-on:
+        required: false
+        type: string
+        default: '["ubuntu-latest", "windows-latest"]'
+      version:
+        required: false
+        type: string
+        default: '["3.11", "3.12"]'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ${{ fromJson(inputs.runs-on) }}
+        python-version: ${{ fromJson(inputs.version) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v2
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Install the project
+        run: uv sync --all-extras --dev
+
+      - name: Run tests
+        # For example, using `pytest`
+        run: uv run pytest --cov ${{ inputs.coverage_source }}
